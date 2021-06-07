@@ -1,0 +1,43 @@
+<html>
+<head>
+ <title>Запись в БД через форму на php</title>
+</head>
+<body>
+  <?php
+  // Переменные с формы
+$name = $_POST['name'];
+$text = $_POST['text'];
+
+// Параметры для подключения
+$db_host = "localhost"; 
+$db_user = "root"; // Логин БД
+$db_password = "root"; // Пароль БД
+$db_base = 'zak'; // Имя БД
+$db_table = "mytable"; // Имя Таблицы БД
+
+try {
+    // Подключение к базе данных
+    $db = new PDO("mysql:host=$db_host;dbname=$db_base", $db_user, $db_password);
+    // Устанавливаем корректную кодировку
+    $db->exec("set names utf8");
+} catch (PDOException $e) {
+    // Если есть ошибка соединения, выводим её
+    print "Ошибка!: " . $e->getMessage() . "<br/>";
+}
+// Собираем данные для запроса
+$data = array( 'name' => $name, 'text' => $text ); 
+// Подготавливаем SQL-запрос
+$query = $db->prepare("INSERT INTO $db_table (name, text) values (:name, :text)");
+// Выполняем запрос с данными
+$query->execute($data);
+if ($result) {
+  echo "Информация занесена в базу данных";
+}
+?>
+ <form method="POST" action="">
+  <input name="name" type="text" placeholder="Имя"/>
+  <input name="text" type="text" placeholder="Текст"/>
+  <input type="submit" value="Отправить"/>
+ </form>
+</body>
+</html>
